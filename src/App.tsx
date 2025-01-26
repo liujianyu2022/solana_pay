@@ -1,42 +1,37 @@
-import { Button, Spin } from "antd";
-import React from "react";
-import { useRoutes } from "react-router-dom";
-import routes from "./router/router";
-import { useSelector } from "react-redux";
-import { StoreType } from "./store/store";
-import { AppStateType } from "./types/ReducerTypes";
-import { LoadingOutlined, MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
+import { DEVNET_QUICK_NODE } from './api/constants'
+import { useRoutes } from 'react-router-dom'
+import routes from './router/router'
 
 function App() {
-    const elements = useRoutes(routes)
-    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
-    const { isLoading } = useSelector<StoreType, AppStateType>(store => store.appReducer)
+  // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
+  const network = WalletAdapterNetwork.Devnet;
 
-    // React.useEffect(() => {
-    //     // 嵌入平台页面的缩放适配 
-    //     let screenWidth = window.screen.width
-    //     let iframeWidth = window.innerWidth
-    //     if (iframeWidth > screenWidth * 0.8) {
-    //         let width = Math.min(iframeWidth, screenWidth)
-    //         let standWidth = 1920
-    //         let Zoom = width / standWidth
-    //         // @ts-ignore 
-    //         document.body.style.zoom = Zoom.toFixed(2);
-    //     }
-    // }, [])
+  console.log("network = ", network)
 
-    // console.log("process --- ", process)
+  const elements = useRoutes(routes)
 
-    return (
-        <div className="App">
-            {/* <Spin tip="加载中，请稍候..." indicator={antIcon} spinning={isLoading}> */}
-                {
-                    elements
-                }
-            {/* </Spin> */}
-        </div>
-    )
+  // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
+  // Only the wallets you configure here will be compiled into your application, and only the dependencies
+  // of wallets that your users connect to will be loaded.
+  const wallets = [
+    new PhantomWalletAdapter(),
+    new SolflareWalletAdapter({ network }),
+  ];
+
+  return (
+    <ConnectionProvider endpoint={DEVNET_QUICK_NODE}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          {elements}
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
+  )
 }
 
 export default App

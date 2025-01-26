@@ -47,32 +47,39 @@ module.exports = {
         rules: [
             {
                 oneOf: [
-                    {
-                        test: /\.css$/,
-                        use: [
-                            isDevelopmentMode ? "style-loader" : MiniCssExtractPlugin.loader,           // 生产模式下 把css单独提取为一个文件
-                            "css-loader"
-                        ]
-                    },
+                    // {
+                    //     test: /\.css$/,
+                    //     use: [
+                    //         isDevelopmentMode ? "style-loader" : MiniCssExtractPlugin.loader,           // 生产模式下 把css单独提取为一个文件
+                    //         "css-loader"
+                    //     ]
+                    // },
                     {
                         test: /\.less$/,
                         use: [
                             isDevelopmentMode ? "style-loader" : MiniCssExtractPlugin.loader,
                             "css-loader",
-                            {
-                                loader: "less-loader",
-                                options: {
-                                    lessOptions: {                           // antd自定义主题
-                                        modifyVars: {
-                                            'primary-color': '#697DFF',
-                                        },
-                                        javascriptEnabled: true,
-                                    }
-                                }
-                            }
-
-
+                            "less-loader"
                         ]
+                    },
+
+                    {
+                        test: /\.css$/, // 匹配 CSS 文件
+                        use: [
+                            'style-loader', // 将 CSS 注入到 DOM 中
+                            'css-loader',   // 处理 CSS 文件中的 `@import` 和 `url()` 等语法
+                            {
+                                loader: 'postcss-loader', // 使用 PostCSS
+                                options: {
+                                    postcssOptions: {
+                                        plugins: [
+                                            require('tailwindcss'), // 加载 TailwindCSS 插件
+                                            require('autoprefixer'), // 加载 Autoprefixer 插件
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
                     },
                     {
                         test: /\.(jpe?g|png|gif|webp|svg)$/,
@@ -145,7 +152,7 @@ module.exports = {
                                     happyPackMode: true,                        // This implicitly sets "transpileOnly" to be true anyway
 
                                     // projectReferences: true,
-                                    
+
                                     // transpileOnly: true,
                                     // cacheDirectory: true
                                 }
@@ -170,7 +177,8 @@ module.exports = {
 
         new Webpack.ProvidePlugin({
             // process: 'process/browser',
-            process: require.resolve('process/browser')
+            process: require.resolve('process/browser'),
+            Buffer: ["buffer", "Buffer"],
         }),
 
         new Dotenv({
@@ -276,20 +284,6 @@ module.exports = {
                     chunks: "initial",
                     priority: 30,
                 },
-
-                antd: {
-                    name: "antd-chunk",
-                    test: /[\\/]node_modules[\\/]antd(.*)/,
-                    priority: 25,
-                },
-
-
-                echarts: {
-                    name: "echarts-chunk",
-                    test: /[\\/]node_modules[\\/]echarts(.*)/,
-                    priority: 20
-                },
-
                 libs: {
                     name: "libs-chunk",
                     test: /[\\/]node_modules[\\/]/,
@@ -307,7 +301,17 @@ module.exports = {
     devtool: isDevelopmentMode ? "cheap-module-source-map" : "source-map",
 
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".json"]            // 自动补全文件扩展名
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],            // 自动补全文件扩展名
+        fallback: {
+            crypto: require.resolve("crypto-browserify"),
+            stream: require.resolve("stream-browserify"),
+            https: require.resolve("https-browserify"),
+            http: require.resolve("stream-http"),
+            assert: require.resolve("assert"),
+            process: require.resolve("process/browser"),
+            vm: require.resolve("vm-browserify"), // 添加 vm 的 polyfill
+            zlib: require.resolve("browserify-zlib"), // 添加 zlib 的 polyfill
+        },
     },
 
     devServer: {

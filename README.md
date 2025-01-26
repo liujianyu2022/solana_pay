@@ -2,6 +2,8 @@ This is a frontend project template leveraging React and TypeScript! It comes pr
 
 The project utilizes webpack and webpack-cli for its build process, ensuring that all dependencies are meticulously curated and necessary. In comparison to projects initialized via commands, this template offers a lighter and more streamlined experience.
 
+NODE-VERSION: V16
+
 ## install
 ```
 $ npm install
