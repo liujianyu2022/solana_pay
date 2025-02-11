@@ -27,8 +27,8 @@ export const products = [
 
 export default function Products({ enabled }: Props) {
 
-    const numberInputRef1 = useRef<{getInfo: ()=>{name: string, priceUsd: number, number: number}}>(null)
-    const numberInputRef2 = useRef<{getInfo: ()=>{name: string, priceUsd: number, number: number}}>(null)
+    const numberInputRef1 = useRef<{getInfo: ()=>{name: string, priceUsd: number, priceSol: number, number: number}}>(null)
+    const numberInputRef2 = useRef<{getInfo: ()=>{name: string, priceUsd: number, priceSol: number, number: number}}>(null)
 
     const navigate = useNavigate()
 
@@ -53,16 +53,11 @@ export default function Products({ enabled }: Props) {
                                 <h3 className="text-2xl font-bold">{product.name}</h3>
                                 <p className="text-sm text-gray-800">{product.description}</p>
                                 <p className="my-4">
-                                    <span className="mt-4 text-xl font-bold">
-                                        ${product.priceUsd}
-                                    </span>
-                                    <span className="text-sm text-gray-800">
-                                        {' '}
-                                        / {product.unitName}
-                                    </span>
+                                    <span className="mt-4 text-xl font-bold">${product.priceUsd} / SOL {product.priceSol} </span>
+                                    <span className="text-sm text-gray-800">/ {product.unitName}</span>
                                 </p>
                                 <div className="mt-1">
-                                    <NumberInput name={product.id} priceUsd={product.priceUsd} ref={index === 0 ? numberInputRef1 : numberInputRef2} />
+                                    <NumberInput name={product.id} priceSol={product.priceSol} priceUsd={product.priceUsd} ref={index === 0 ? numberInputRef1 : numberInputRef2} />
                                 </div>
                             </div>
                         )

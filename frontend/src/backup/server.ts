@@ -72,9 +72,9 @@ const requestHandler = async (req: typeof IncomingMessage, res: typeof ServerRes
 };
 
 // Create and start the server
-const PORT = 3005;
-const server = createServer(requestHandler);
+const PORT = 3005
+const server = createServer(requestHandler)
 
 server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`)
 });

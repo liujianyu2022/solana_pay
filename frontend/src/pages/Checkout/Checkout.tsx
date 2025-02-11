@@ -10,8 +10,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { makeTransaction } from '../../api/checkout'
 import React from 'react'
 
-// Read the URL query (which includes our chosen products)
-// const searchParams = new URLSearchParams()
 
 export default function Checkout() {
     const navigate = useNavigate()
@@ -26,17 +24,10 @@ export default function Checkout() {
 
     const connection = React.useMemo(() => new Connection(DEVNET_QUICK_NODE, 'confirmed'), []);
 
-
-    // React.useEffect(() => {
-    //     location.state.forEach((item: { name: string, number: number }) => {
-    //         searchParams.append(item.name, String(item.number))
-    //     })
-    // }, [])
-
     React.useEffect(() => {
         if (publicKey){
-            // makeTransactions({ account: publicKey.toString() })
-            // console.log("searchParams = ", searchParams)
+            let solAmount = (location.state as Array<{priceUsd: number, priceSol: number, number: number}>).reduce((pre, cur)=> pre + cur.number * cur.priceSol, 0)
+            makeTransactions({ payer: publicKey.toString(), amount: solAmount.toFixed(9) })
         } 
     }, [publicKey])
 
@@ -47,7 +38,7 @@ export default function Checkout() {
 
 
     // Use our API to fetch the transaction for the selected items
-    const makeTransactions = async (obj: { account: string }) => {
+    const makeTransactions = async (obj: { payer: string, amount: string | number }) => {
         try {
             const response = await makeTransaction(obj)
 
@@ -80,11 +71,9 @@ export default function Checkout() {
                 return;
             }
 
- 
             // Check wallet balance before sending the transaction
             const balance = await connection.getBalance(publicKey);
             console.log('Wallet balance:', balance / 1e9)
-
 
             // Proceed with sending the transaction if balance is sufficient
             const transactionSignature = await sendTransaction(transaction!, connection);
@@ -96,6 +85,7 @@ export default function Checkout() {
             if (signatureInfo.length === 0) throw new Error('Transaction not found')
 
             navigate('/confirmed')
+
         } catch (error: any) {
             console.error("trySendTransaction = ", error);
         }

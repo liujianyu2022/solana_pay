@@ -14,7 +14,6 @@ const EncodingPlugin = require('webpack-encoding-plugin');
 // const HappyPack = require('happypack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-
 const threads = os.cpus().length
 
 console.log("process.env.NODE_ENV ---", process.env.NODE_ENV)
@@ -30,6 +29,8 @@ const isDevelopmentMode = process.env.NODE_ENV === "development"
     5.需要一个CopyPlugin，可以把public目录下的文件进行复制
     6.filename或者chunkFilename设置的时候加上 [contenthash:5] 用来进行资源的缓存对比
  */
+
+// module.exports = {
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -47,13 +48,6 @@ module.exports = {
         rules: [
             {
                 oneOf: [
-                    // {
-                    //     test: /\.css$/,
-                    //     use: [
-                    //         isDevelopmentMode ? "style-loader" : MiniCssExtractPlugin.loader,           // 生产模式下 把css单独提取为一个文件
-                    //         "css-loader"
-                    //     ]
-                    // },
                     {
                         test: /\.less$/,
                         use: [
@@ -250,11 +244,11 @@ module.exports = {
             ],
         }),
 
-        // 解决 process is not define 报错
-        new Webpack.ProvidePlugin({
-            // process: 'process/browser',
-            process: require.resolve('process/browser')
-        }),
+        // // 解决 process is not define 报错
+        // new Webpack.ProvidePlugin({
+        //     // process: 'process/browser',
+        //     process: require.resolve('process/browser')
+        // }),
 
     ].filter(Boolean),
 
@@ -307,8 +301,8 @@ module.exports = {
             stream: require.resolve("stream-browserify"),
             https: require.resolve("https-browserify"),
             http: require.resolve("stream-http"),
-            assert: require.resolve("assert"),
-            process: require.resolve("process/browser"),
+            // assert: require.resolve("assert"),
+            // process: require.resolve("process/browser"),
             vm: require.resolve("vm-browserify"), // 添加 vm 的 polyfill
             zlib: require.resolve("browserify-zlib"), // 添加 zlib 的 polyfill
         },

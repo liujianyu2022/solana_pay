@@ -4,10 +4,11 @@ import React from "react"
 interface Props {
   name: string
   priceUsd: number
+  priceSol: number
 }
 
 const NumberInput1 = (props: Props, ref: React.ForwardedRef<{getInfo: ()=>{name: string, priceUsd: number, number: number}}>) => {
-  const { name, priceUsd } = props
+  const { name, priceUsd, priceSol } = props
   const [number, setNumber] = React.useState(0)
 
   React.useImperativeHandle(ref, () => ({
@@ -24,7 +25,7 @@ const NumberInput1 = (props: Props, ref: React.ForwardedRef<{getInfo: ()=>{name:
   }
 
   const getInfo = () => {
-    return {name, priceUsd, number}
+    return {name, priceUsd, priceSol, number}
   }
 
 
